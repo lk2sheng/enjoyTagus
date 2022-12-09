@@ -27,6 +27,12 @@ NUM_HEADER_LINES = 7
 # In a skipper's list:
 # Index of the element with the skipper's name
 SKIPPER_NAME_IDX = 0
+SKIPPER_STARTS = 2
+SKIPPER_LANGUAGES = 1
+SKIPPER_TARIFF = 3
+SKIPPER_SPECIALTIES = 4
+SKIPPER_TIME_MAX = 5
+SKIPPER_ACCUMULATED_TIME = 6
 
 # In a cruise's list:
 # Index of the element with the client's name
