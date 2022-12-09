@@ -51,7 +51,7 @@ def readSkippersFile(fileName):
             # Fazer split da linha
             # Adicionar o skipper ao dicionario
             skippersDict[skipper[const.SKIPPER_NAME_IDX]]= {"licenceType": skipper[const.SKIPPER_LICENCE_TYPE], "languages": skipper[const.SKIPPER_LANGUAGES],
-                                   "tariff": skipper[const.SKIPPER_TARIFF], "specialities": skipper[const.SKIPPER_SPECIALTIES], 
+                                   "tariff": skipper[const.SKIPPER_TARIFF], "speciality": skipper[const.SKIPPER_SPECIALITY], 
                                    "timeMax": skipper[const.SKIPPER_TIME_MAX], "accumulatedTime": skipper[const.SKIPPER_ACCUMULATED_TIME]}
     return skippersDict
 
@@ -79,6 +79,3 @@ def readRequestsFile(fileName):
                                 "specialities": request[const.REQUEST_SPECIALITY_TYPE], 
                                    "requestTime": request[const.REQUEST_CRUISE_TIME]}
     return requestDict
-
-
-teste()

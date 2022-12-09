@@ -1,41 +1,28 @@
 import readingFromFiles
-import constants as const
 
 skippersDict = {}
-drivers = skippersDict
 
-def getMatchingDrivers(availableDrivers, stars, language, especializaçao, tempo_requesitado):
+def getMatchingSkippers(availableSkippers, licenceType, language, speciality, requestTime):
 #funcao para unir condutor e o cliente
-
-    for condutor_pedido in availableDrivers:
-        driverStars = drivers[condutor_pedido]["stars"]
-        driverEspecializaçao = drivers[condutor_pedido]["especializaçao"]
-        driverLanguages = drivers[condutor_pedido]["languages"]
-        driverTempo_max = drivers[condutor_pedido]["tempo_max"]
-        if(driverSpeaksLanguage(driverLanguages, language) and driverStars == stars and driverEspecializaçao == especializaçao and driverTempo_max <= tempo_requesitado):
-            return condutor_pedido
+    for skipperName in availableSkippers:
+        skipper = skippersDict[skipperName]
+        if skipperSpeaksLanguage(skipper["languages"], language) and skipper["licenceType"] == licenceType and skipper["speciality"] == speciality and skipper["timeMax"] <= requestTime+skipper["accumulatedTime"]:
+            return skipper
 
 # Funcao auxiliar para verificar se o driver fala a linguagem necessaria  
-def driverSpeaksLanguage( spokenLanguages, requiredLanguage):
+def skipperSpeaksLanguage( spokenLanguages, requiredLanguage):
     for l in spokenLanguages:
         for l1 in requiredLanguage:
             if( l == l1):
                 return True
     return False
-    
-""" availableDrivers = getDriversByDate(2022, 1, 1, 12)
-matchingDriver = getMatchingDrivers(availableDrivers, 4, ["English", "French"])
-print(matchingDriver)
- """
 
-def readSkippersFromFile ( skippersFileName ): 
-    # Ler o ficheiro
-    skippersList = readingFromFiles.readSkippersFile(skippersFileName)
-    skippersDict = {}
-
-    # Iterar sobre cada linha do ficheiro
+avalableSkippers = ["Ana Amaral","Carlos Santos"]
 
 
-mySkipers = readSkippersFromFile ("./data/skippers.txt")
-print (mySkipers)
+
+skippersDict = readingFromFiles.readSkippersFile("./data/testSet1/skippers17h00.txt")
+
+print(getMatchingSkippers(avalableSkippers, "3*", "portuguese", "speed", "10"))
+
 
