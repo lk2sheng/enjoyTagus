@@ -8,9 +8,8 @@ import constants
 # 65015 Miquelina Josefa
 
 def teste():
-    print(removeHeader("./data/skippers.txt"))
-    print(readSkippersFile("./data/skippers.txt"))
-    print(readRequestsFile("./data/skippers.txt"))
+  
+    print(readRequestsFile("./data/testSet1/requests17h00.txt"))
 
 
 
@@ -63,5 +62,3 @@ def readRequestsFile(fileName):
         requestsList.append(requestData)        
 
     return requestsList
-
-teste()
