@@ -50,9 +50,9 @@ def readSkippersFile(fileName):
         if( skipper != "" ):
             # Fazer split da linha
             # Adicionar o skipper ao dicionario
-            skippersDict[skipper[const.SKIPPER_NAME_IDX]]= {"licenceType": skipper[const.SKIPPER_LICENCE_TYPE], "languages": skipper[const.SKIPPER_LANGUAGES],
-                                   "tariff": skipper[const.SKIPPER_TARIFF], "speciality": skipper[const.SKIPPER_SPECIALITY], 
-                                   "timeMax": skipper[const.SKIPPER_TIME_MAX], "accumulatedTime": skipper[const.SKIPPER_ACCUMULATED_TIME]}
+            skippersDict[skipper[const.SKIPPER_NAME_IDX]]= {"name": skipper[const.SKIPPER_NAME_IDX], "licenceType": skipper[const.SKIPPER_LICENCE_TYPE], "languages": skipper[const.SKIPPER_LANGUAGES],
+                                   "tariff": float(skipper[const.SKIPPER_TARIFF]), "speciality": skipper[const.SKIPPER_SPECIALITY], 
+                                   "timeMax": float(skipper[const.SKIPPER_TIME_MAX]), "accumulatedTime": float(skipper[const.SKIPPER_ACCUMULATED_TIME])}
     return skippersDict
 
 
@@ -70,12 +70,26 @@ def readRequestsFile(fileName):
         requestData = line.rstrip().split(", ")
         requestsList.append(requestData)        
    
-   
-    requestDict = {}
-    for request in requestsList:
-        if( request != "" ):
-            requestDict[request[const.REQUEST_CLIENT_NAME_IDX]]= {"requestLicenceType": request[const.SKIPPER_LICENCE_TYPE],
-                                 "languages": request[const.REQUEST_CLIENT_LANGUAGES],
-                                "specialities": request[const.REQUEST_SPECIALITY_TYPE], 
-                                   "requestTime": request[const.REQUEST_CRUISE_TIME]}
-    return requestDict
+    return requestsList
+
+
+def readSchedulesFile (fileName):
+    
+    inFile = removeHeader(fileName)
+
+    travelList = []
+    for travel in inFile:
+        travelData = travel.rstrip().split(", ")
+        travelList.append(travelData)
+
+    travelDict = {}
+    for travel in travelList:
+        if( travel != "" ):
+            travelDict[travel[const.TRAVEL_DATE]+"-"+travel[const.TRAVEL_TIME]+"|"+travel[const.TRAVEL_SKIPPER_NAME]] = \
+                        [travel[const.TRAVEL_TIME], \
+                        travel[const.TRAVEL_SKIPPER_NAME], \
+                        travel[const.TRAVEL_PRICE], travel[const.TRAVEL_CLIENT_NAME]]
+
+    return travelDict
+
+
