@@ -1,22 +1,25 @@
-import readingFromFiles, constants as const
+import readingFromFiles
+import constants as const
+import writingToFiles as writter
 import random
+import utils
 import sys
 
 skippersDict = {}
 
 def getMatchingSkipper(availableSkippers, licenceType, language, speciality, requestTime):
 #funcao para unir condutor e o cliente
-    matchedSkippers = []
+    matchedSkippersName = []
     for skipperName in availableSkippers:
         skipper = skippersDict[skipperName]
         if skipperSpeaksLanguage(skipper["languages"], language) and skipper["licenceType"] == licenceType and skipper["speciality"] == speciality and skipper["timeMax"] >= requestTime + skipper["accumulatedTime"]:
-            matchedSkippers.append(skipperName)
+            matchedSkippersName.append(skipperName)
     
-    if len(matchedSkippers) != 0:
-        skipperIdx=random.randint(0, len(matchedSkippers)-1)
-        return matchedSkippers[skipperIdx]
+    if len(matchedSkippersName) != 0:
+        skipperIdx=random.randint(0, len(matchedSkippersName)-1)
+        return matchedSkippersName[skipperIdx]
     else:
-        return None
+        return []
 
 # Funcao auxiliar para verificar se o driver fala a linguagem necessaria  
 def skipperSpeaksLanguage(spokenLanguages, requiredLanguage):
@@ -52,23 +55,33 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
     """
 
     # Read all the files
-    skippersDict = readingFromFiles.readSkippersFile("./data/testSet1/skippers17h00.txt")
-    schedules = readingFromFiles.readSchedulesFile("./data/testSet1/schedule17h00.txt")
-    requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
+    # skippersDict = readingFromFiles.readSkippersFile("./data/testSet1/skippers17h00.txt")
+    skippersDict = readingFromFiles.readSkippersFile(skippersFileName)
+    # schedules = readingFromFiles.readSchedulesFile("./data/testSet1/schedule17h00.txt")
+    schedulesDict = readingFromFiles.readSchedulesFile(scheduleFileName)
+    # requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
+    requestsList = readingFromFiles.readRequestsFile(requestsFileName)
 
 
     # For each request
-    for request in requests:
+    for request in requestsList:
         # Compute the matching skipper for the request criteria
         matchedSkipper = getMatchingSkipper(skippersDict,   request[const.REQUEST_SKIPPER_LICENCE_TYPE], 
                                                             request[const.REQUEST_CLIENT_LANGUAGES], 
                                                             request[const.REQUEST_SPECIALITY_TYPE], 
                                                             float(request[const.REQUEST_CRUISE_TIME]))
-        print(matchedSkipper)
-        # Update the schedule
-        updateSchedule(skipperDict[matchedSkipper], request)
-        # Update the skipper
-        updateSkipper()
+       
+        # Update the schedule. Give the matched skipper details, the request he was just assigned to and the existing schedules
+        # this function returns the new schedule
+        newSchedule = updateSchedule(skippersDict[matchedSkipper], request, schedulesDict)
+        
+        # Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
+        newSkipper = updateSkipper(skippersDict[matchedSkipper], request)
+
+        # Now that we have a new skipper detail, replace the old skipper record on the skippersDict
+        newSkippers = skippersDict[matchedSkipper] = newSkipper
+
+        return (newSchedule, newSkippers)
     
 
 
@@ -76,9 +89,16 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
 MAIN PROGRAM
 """
 
-# Read command line arguments ~, va,idate file names and return List of file. [0]is skypperfile, [2]is reuestsfile, [2]is schedulefile
-filesList = readCommandLineArguments(sys.argv)
+# Read command line arguments
+filesList = utils.readCommandLineArguments()
 
-assign(filesList[0], filesList[1], filesList[2])
+#(newSchedule, newSkippers) = assign(filesList[0], filesList[1], filesList[2])~
+
+## Test with hard codeed files
+(newSchedule, newSkippers) = assign("./data/testSet1/skippers17h00.txt", 
+                                    "./data/testSet1/schedule17h00.txt",
+                                    "./data/testSet1/requests17h00.txt")
 
 # Save output files (new schedules, new skippers) 
+writter.writeScheduleFile(newSchedule)
+writter.writeSkippersFile(newSkippers)
