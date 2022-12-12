@@ -1,10 +1,30 @@
-#-*- coding: utf-8 -*-
+import readingFromFiles, constants as const
+import random
+import sys
 
-# 2022-2023 Programação 1 (LTI)
-# Grupo 546
-# 65000 Óscar Adalberto 
-# 65015 Miquelina Josefa
+skippersDict = {}
 
+def getMatchingSkipper(availableSkippers, licenceType, language, speciality, requestTime):
+#funcao para unir condutor e o cliente
+    matchedSkippers = []
+    for skipperName in availableSkippers:
+        skipper = skippersDict[skipperName]
+        if skipperSpeaksLanguage(skipper["languages"], language) and skipper["licenceType"] == licenceType and skipper["speciality"] == speciality and skipper["timeMax"] >= requestTime + skipper["accumulatedTime"]:
+            matchedSkippers.append(skipperName)
+    
+    if len(matchedSkippers) != 0:
+        skipperIdx=random.randint(0, len(matchedSkippers)-1)
+        return matchedSkippers[skipperIdx]
+    else:
+        return None
+
+# Funcao auxiliar para verificar se o driver fala a linguagem necessaria  
+def skipperSpeaksLanguage(spokenLanguages, requiredLanguage):
+    for l in spokenLanguages:
+        for l1 in requiredLanguage:
+            if( l == l1):
+                return True
+    return False
 
 
 def assign(skippersFileName, scheduleFileName, requestsFileName):
@@ -30,8 +50,35 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
     scheduleFileName and requestsFileName, and are written in the same directory
     of the latter.
     """
+
+    # Read all the files
+    skippersDict = readingFromFiles.readSkippersFile("./data/testSet1/skippers17h00.txt")
+    schedules = readingFromFiles.readSchedulesFile("./data/testSet1/schedule17h00.txt")
+    requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
+
+
+    # For each request
+    for request in requests:
+        # Compute the matching skipper for the request criteria
+        matchedSkipper = getMatchingSkipper(skippersDict,   request[const.REQUEST_SKIPPER_LICENCE_TYPE], 
+                                                            request[const.REQUEST_CLIENT_LANGUAGES], 
+                                                            request[const.REQUEST_SPECIALITY_TYPE], 
+                                                            float(request[const.REQUEST_CRUISE_TIME]))
+        print(matchedSkipper)
+        # Update the schedule
+        updateSchedule(skipperDict[matchedSkipper], request)
+        # Update the skipper
+        updateSkipper()
     
 
 
-        
+""""
+MAIN PROGRAM
+"""
 
+# Read command line arguments ~, va,idate file names and return List of file. [0]is skypperfile, [2]is reuestsfile, [2]is schedulefile
+filesList = readCommandLineArguments(sys.argv)
+
+assign(filesList[0], filesList[1], filesList[2])
+
+# Save output files (new schedules, new skippers) 
