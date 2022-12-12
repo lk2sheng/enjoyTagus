@@ -21,6 +21,14 @@ Set your email address:
 git config --global user.email "MY_NAME@example.com"
 '''
 
+# How to contribute to thi repository
+After making the changes and you are happy with it issue the follwoing commands:
+'''
+1 . git -a -m commit "Enter a commit message. Can be enything but describe what you did in few words"
+ You may be asked to login to github. You must have an account on github (go and create one if you don't www.github.com)
+2. git push
+3. Your changes should be successfuly delivered to github
+
 # How to run the program
 Go to src folder and execute the following command:
 ''' python3 update.py SkippersFile RequestsFile SchecduleFile
