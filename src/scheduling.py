@@ -35,5 +35,3 @@ def updateSkippers(skippers, schedule):
 
 
 
-
-
