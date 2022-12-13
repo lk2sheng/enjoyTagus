@@ -77,22 +77,22 @@ def readSchedulesFile (fileName):
     
     inFile = removeHeader(fileName)
 
-    travelList = []
-    for travel in inFile:
-        travelData = travel.rstrip().split(", ")
-        travelList.append(travelData)
+    scheduleList = []
+    for scheduleRaw in inFile:
+        scheduleData = scheduleRaw.rstrip().split(", ")
+        scheduleList.append(scheduleData)
 
-    travelDict = {}
-    for travel in travelList:
-        if( travel != "" ):
-            travelDict[travel[const.TRAVEL_DATE]+"-"+travel[const.TRAVEL_TIME]+"|"+travel[const.TRAVEL_SKIPPER_NAME]] = \
-                        [travel[const.TRAVEL_TIME], \
-                        travel[const.TRAVEL_SKIPPER_NAME], \
-                        travel[const.TRAVEL_PRICE], \
-                        travel[const.TRAVEL_CLIENT_NAME], \
-                        travel[const.TRAVEL_DATE], \
-                        travel[const.TRAVEL_DURATION]]
+    scheduleDict = {}
+    for schedule in scheduleList:
+        if( schedule != "" ):
+            scheduleDict[schedule[const.SCHEDULE_DATE]+"-"+schedule[const.SCHEDULE_TIME]+"|"+travel[const.SCHEDULE_SKIPPER_NAME]] = \
+                        [schedule[const.SCHEDULE_DATE], \
+                        schedule[const.SCHEDULE_TIME], \
+                        schedule[const.SCHEDULE_DURATION], \
+                        schedule[const.SCHEDULE_SKIPPER_NAME], \
+                        schedule[const.SCHEDULE_PRICE], \
+                        schedule[const.SCHEDULE_CLIENT_NAME]]
 
-    return travelDict
+    return scheduleDict
 
 

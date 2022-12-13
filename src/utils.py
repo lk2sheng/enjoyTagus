@@ -1,6 +1,8 @@
 import sys
 import constants as const
-import dateTime
+import dateTime as dt
+
+
 # Read command line arguments from sys.argv and validate file names and return List of file.
 # Executing this program should in the form: python3 update.py inputFile1 inputFile2 inputFile3
 # The return List should be the followng
@@ -22,39 +24,25 @@ def readCommandLineArguments():
     return None # TODO: Return a List of files after implementing this function
 
 
-# Update the schedule. Give the matched skipper details, the request he was just assigned to and the existing schedules
-# this function returns the new schedule
-def updateSchedule(skippersRecord, request, schedulesDict):
+def addTimeToDateTime(dateTime, time):
     """
-        This function takes the skipper record, the request and the schedules dictionary and 
-        returns the updated schedules dictionary
+        Function adds a time to a datetime.It only adds hours not minutes
+        Requires: DateTime in the format "dd:mm:yyyy|hh:mm" and time in the format "hh:00". 
+                  If the sum of hours in the parameters exceeds 16 the function returns the next day 8:00 plus the number of hours in time parameter
         
     """
-    dateTimeOfLastTrip = "01:01:0001|00:00"
-    for schedulesKeys in schedulesDict.keys():
-        if skippersRecord["name"] == schedulesKeys.split("-")[1]: 
-            if BiggestDate(schedulesKeys.split("-")[0], dateTimeOfLastTrip) != dateTimeOfLastTrip:
-                dateTimeOfLastTrip = schedulesKeys.split("-")[0]
-    lastSchedule = schedulesDict[dateTimeOfLastTrip+"-"+skippersRecord["name"]]
-    newTripDateTime = addTimeToDateTime(dateTimeOfLastTrip, lastSchedule[2])
-    newSchedule = []
-    newSchedule[0] = newTripDateTime.split("|")[1] #new time 
-    newSchedule[1] = skippersRecord["name"] #skipper name
-    newSchedule[2] = skippersRecord["tariff"] #tariff
-    newSchedule[3] = request[const.REQUEST_CLIENT_NAME_IDX] # client name
-    newSchedule [4] = newTripDateTime.split("|")[0]#new date
-    newSchedule[5] = request[const.REQUEST_CRUISE_TIME] #new cruise duration duration
+    date1 = (dateTime.split("|")[0], dateTime.split("|")[1], dateTime.split("|")[2])
+    time1 = (dateTime.split("|")[1], "00")
+    
+    newHour = dt.hourToInt(time1[0]) + dt.hourToInt(time.split(":")[0])
+    newHourString = dt.intToTime(newHour, int(time.split(":")[1]))
+    if newHour > 16:
+        return None
+    return date1 + "|" + newHourString
 
-    schedulesDict[newSchedule[4]+"|"+newSchedule[0]+"-"+skippersRecord["name"]] = newSchedule
+print( addTimeToDateTime("10:11:2022|00:00", "80:00"))
 
-    return schedulesDict
-
-# Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
-def updateSkipper(skipperRecord, request):
-    """ TODO: Implement this"""
-
-
-def BiggestDate(dateTime1, dateTime2):
+def biggestDate(dateTime1, dateTime2):
     """
     This function takes two dates and times and returns the biggest one.
     Requires: The dates and times to be in the format: dd:mm:yyyy|hh:mm
@@ -92,6 +80,3 @@ def BiggestDate(dateTime1, dateTime2):
         else:
             return dateTime2
             
-
-
-print(BiggestDate("01:12:2023|15:30", "01:12:2023|15:00"))

@@ -4,6 +4,7 @@ import writingToFiles as writter
 import random
 import utils
 import sys
+import scheduling
 
 skippersDict = {}
 
@@ -73,17 +74,16 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
        
         # Update the schedule. Give the matched skipper details, the request he was just assigned to and the existing schedules
         # this function returns the new schedule
-        newSchedule = updateSchedule(skippersDict[matchedSkipper], request, schedulesDict)
+        newSchedule = scheduling.updateSchedule(skippersDict[matchedSkipper], request, schedulesDict)
         
         # Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
-        newSkipper = updateSkipper(skippersDict[matchedSkipper], request)
+        newSkipper = scheduling.updateSkipper(skippersDict[matchedSkipper], request)
 
         # Now that we have a new skipper detail, replace the old skipper record on the skippersDict
         newSkippers = skippersDict[matchedSkipper] = newSkipper
 
         return (newSchedule, newSkippers)
     
-
 
 """"
 MAIN PROGRAM
@@ -100,5 +100,5 @@ filesList = utils.readCommandLineArguments()
                                     "./data/testSet1/requests17h00.txt")
 
 # Save output files (new schedules, new skippers) 
-writter.writeScheduleFile(newSchedule)
-writter.writeSkippersFile(newSkippers)
+# writter.writeScheduleFile(newSchedule)
+# writter.writeSkippersFile(newSkippers)
