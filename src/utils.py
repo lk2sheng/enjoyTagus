@@ -30,12 +30,24 @@ def updateSchedule(skippersRecord, request, schedulesDict):
         returns the updated schedules dictionary
         
     """
-    dateOfLastTrip = "1:1:0001|00:00"
+    dateTimeOfLastTrip = "01:01:0001|00:00"
     for schedulesKeys in schedulesDict.keys():
         if skippersRecord["name"] == schedulesKeys.split("-")[1]: 
-            if BiggestDate(schedulesKeys.split("-")[0], dateOfLastTrip) != dateOfLastTrip:
-                dateOfLastTrip = schedulesKeys.split("-")[0]
+            if BiggestDate(schedulesKeys.split("-")[0], dateTimeOfLastTrip) != dateTimeOfLastTrip:
+                dateTimeOfLastTrip = schedulesKeys.split("-")[0]
+    lastSchedule = schedulesDict[dateTimeOfLastTrip+"-"+skippersRecord["name"]]
+    newTripDateTime = addTimeToDateTime(dateTimeOfLastTrip, lastSchedule[2])
+    newSchedule = []
+    newSchedule[0] = newTripDateTime.split("|")[1] #new time 
+    newSchedule[1] = skippersRecord["name"] #skipper name
+    newSchedule[2] = skippersRecord["tariff"] #tariff
+    newSchedule[3] = request[const.REQUEST_CLIENT_NAME_IDX] # client name
+    newSchedule [4] = newTripDateTime.split("|")[0]#new date
+    newSchedule[5] = request[const.REQUEST_CRUISE_TIME] #new cruise duration duration
 
+    schedulesDict[newSchedule[4]+"|"+newSchedule[0]+"-"+skippersRecord["name"]] = newSchedule
+
+    return schedulesDict
 
 # Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
 def updateSkipper(skipperRecord, request):

@@ -88,7 +88,10 @@ def readSchedulesFile (fileName):
             travelDict[travel[const.TRAVEL_DATE]+"-"+travel[const.TRAVEL_TIME]+"|"+travel[const.TRAVEL_SKIPPER_NAME]] = \
                         [travel[const.TRAVEL_TIME], \
                         travel[const.TRAVEL_SKIPPER_NAME], \
-                        travel[const.TRAVEL_PRICE], travel[const.TRAVEL_CLIENT_NAME]]
+                        travel[const.TRAVEL_PRICE], \
+                        travel[const.TRAVEL_CLIENT_NAME], \
+                        travel[const.TRAVEL_DATE], \
+                        travel[const.TRAVEL_DURATION]]
 
     return travelDict
 
