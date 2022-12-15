@@ -63,13 +63,6 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
     # requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
     requestsList = readingFromFiles.readRequestsFile(requestsFileName)
 
-    """    print("#############################################")
-        print("Skippers: ", skippersDict)
-        print("#############################################")
-        print("Schedules: ", schedulesDict)
-        print("#############################################")
-        print("Requests: ", requestsList)
-    """
 
     # For each request
     for request in requestsList:
@@ -103,7 +96,6 @@ filesList = utils.readCommandLineArguments()
                                     "./data/testSet1/schedule17h00.txt",
                                     "./data/testSet1/requests17h00.txt")
 
-print("HI")
 # Save output files (new schedules, new skippers) 
-# writter.writeScheduleFile(newSchedule)
-# writter.writeSkippersFile(newSkippers)
+writter.writeScheduleFile(newSchedule)
+writter.writeSkippersFile(newSkippers)

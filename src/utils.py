@@ -73,8 +73,6 @@ def biggestDate(dateTime1, dateTime2):
         
     else:
         if int(year1+month1+day1) > int(""+year2+month2+day2):
-            print(int(year1+month1+day1))
-            print(int(year2+month2+day2))
             return dateTime1
         else:
             return dateTime2
