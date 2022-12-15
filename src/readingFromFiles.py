@@ -85,7 +85,7 @@ def readSchedulesFile (fileName):
     scheduleDict = {}
     for schedule in scheduleList:
         if( schedule != "" ):
-            scheduleDict[schedule[const.SCHEDULE_DATE]+"-"+schedule[const.SCHEDULE_TIME]+"|"+travel[const.SCHEDULE_SKIPPER_NAME]] = \
+            scheduleDict[schedule[const.SCHEDULE_DATE]+"|"+schedule[const.SCHEDULE_TIME]+"-"+schedule[const.SCHEDULE_SKIPPER_NAME]] = \
                         [schedule[const.SCHEDULE_DATE], \
                         schedule[const.SCHEDULE_TIME], \
                         schedule[const.SCHEDULE_DURATION], \

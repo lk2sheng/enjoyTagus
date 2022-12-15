@@ -1,6 +1,6 @@
 import readingFromFiles
 import constants as const
-import writingToFiles as writter
+#import writingToFiles as writter
 import random
 import utils
 import sys
@@ -12,7 +12,7 @@ def getMatchingSkipper(availableSkippers, licenceType, language, speciality, req
 #funcao para unir condutor e o cliente
     matchedSkippersName = []
     for skipperName in availableSkippers:
-        skipper = skippersDict[skipperName]
+        skipper = availableSkippers[skipperName]
         if skipperSpeaksLanguage(skipper["languages"], language) and skipper["licenceType"] == licenceType and skipper["speciality"] == speciality and skipper["timeMax"] >= requestTime + skipper["accumulatedTime"]:
             matchedSkippersName.append(skipperName)
     
@@ -63,6 +63,13 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
     # requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
     requestsList = readingFromFiles.readRequestsFile(requestsFileName)
 
+    """    print("#############################################")
+        print("Skippers: ", skippersDict)
+        print("#############################################")
+        print("Schedules: ", schedulesDict)
+        print("#############################################")
+        print("Requests: ", requestsList)
+    """
 
     # For each request
     for request in requestsList:
@@ -71,19 +78,16 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
                                                             request[const.REQUEST_CLIENT_LANGUAGES], 
                                                             request[const.REQUEST_SPECIALITY_TYPE], 
                                                             float(request[const.REQUEST_CRUISE_TIME]))
-       
+
         # Update the schedule. Give the matched skipper details, the request he was just assigned to and the existing schedules
         # this function returns the new schedule
         newSchedule = scheduling.updateSchedule(skippersDict[matchedSkipper], request, schedulesDict)
+        schedulesDict[newSchedule[const.SCHEDULE_DATE]+"|"+newSchedule[const.SCHEDULE_TIME]+"-"+matchedSkipper] = newSchedule
         
         # Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
-        newSkipper = scheduling.updateSkipper(skippersDict[matchedSkipper], request)
+        scheduling.updateSkipper(skippersDict[matchedSkipper], newSchedule)
 
-        # Now that we have a new skipper detail, replace the old skipper record on the skippersDict
-        newSkippers = skippersDict[matchedSkipper] = newSkipper
-
-        return (newSchedule, newSkippers)
-    
+        return (skippersDict, schedulesDict)
 
 """"
 MAIN PROGRAM
@@ -95,10 +99,11 @@ filesList = utils.readCommandLineArguments()
 #(newSchedule, newSkippers) = assign(filesList[0], filesList[1], filesList[2])~
 
 ## Test with hard codeed files
-(newSchedule, newSkippers) = assign("./data/testSet1/skippers17h00.txt", 
+(skippers, schedules) = assign("./data/testSet1/skippers17h00.txt", 
                                     "./data/testSet1/schedule17h00.txt",
                                     "./data/testSet1/requests17h00.txt")
 
+print("HI")
 # Save output files (new schedules, new skippers) 
 # writter.writeScheduleFile(newSchedule)
 # writter.writeSkippersFile(newSkippers)

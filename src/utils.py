@@ -24,23 +24,22 @@ def readCommandLineArguments():
     return None # TODO: Return a List of files after implementing this function
 
 
-def addTimeToDateTime(dateTime, time):
+def addHoursToDateTime(dateTime, hours):
     """
         Function adds a time to a datetime.It only adds hours not minutes
-        Requires: DateTime in the format "dd:mm:yyyy|hh:mm" and time in the format "hh:00". 
-                  If the sum of hours in the parameters exceeds 16 the function returns the next day 8:00 plus the number of hours in time parameter
+        Requires: DateTime in the format "dd:mm:yyyy|hh:mm" and hour is the integer representing the number of hours to add. 
+                  Unfortunately no validation is done on the dateTime format after adding the hours as it can be bigger than 24.
+                  In that case the date will be wrong
         
     """
-    date1 = (dateTime.split("|")[0], dateTime.split("|")[1], dateTime.split("|")[2])
-    time1 = (dateTime.split("|")[1], "00")
+    date1 = (dateTime.split("|")[0], dateTime.split("|")[1])
+    time1 = (date1[1].split(":")[0], date1[1].split(":")[1])
     
-    newHour = dt.hourToInt(time1[0]) + dt.hourToInt(time.split(":")[0])
-    newHourString = dt.intToTime(newHour, int(time.split(":")[1]))
-    if newHour > 16:
-        return None
-    return date1 + "|" + newHourString
+    newHour = dt.hourToInt(time1[0]) + hours
+    newHourString = dt.intToTime(newHour, int(time1[1]))
+    return date1[0] + "|" + newHourString 
 
-print( addTimeToDateTime("10:11:2022|00:00", "80:00"))
+
 
 def biggestDate(dateTime1, dateTime2):
     """
