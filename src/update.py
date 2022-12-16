@@ -88,15 +88,18 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
 MAIN PROGRAM
 """
 
+utils.readCommandLineArguments()
 # Read command line arguments
 filesList = utils.readCommandLineArguments()
 
-#(newSchedule, newSkippers) = assign(filesList[0], filesList[1], filesList[2])~
 
+(skippers, schedules) = assign(filesList[0], filesList[2], filesList[1])
 ## Test with hard codeed files
+"""
 (skippers, schedules) = assign("./data/testSet1/skippers17h00.txt", 
                                     "./data/testSet1/schedule17h00.txt",
                                     "./data/testSet1/requests17h00.txt")
+"""
 print(skippers)
 print(schedules)
 

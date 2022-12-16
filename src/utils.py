@@ -1,4 +1,5 @@
 import sys
+import os
 import constants as const
 import dateTime as dt
 
@@ -20,8 +21,19 @@ def readCommandLineArguments():
           [2] - is schedulefile
         If the files do not conform to the file naming standard then the program needs to stop with an error message
     """
-    """TODO: Implement this"""
-    return None # TODO: Return a List of files after implementing this function
+    skypperfile = sys.argv[1]
+    requestsfile = sys.argv[2]
+    schedulefile = sys.argv[3]
+    print (sys.argv)
+    
+    for fileArgIndex in range(1, 4):    
+        # Check whether a path pointing to a file
+        file = sys.argv[fileArgIndex]
+        print(file)
+        if os.path.isfile(file) != True:
+            print("Error: File " + file + " does not exist.")
+            sys.exit(-1)
+    return (skypperfile, requestsfile, schedulefile)
 
 
 def addHoursToDateTime(dateTime, hours):
