@@ -25,9 +25,8 @@ def getNewSchedule(skippersRecord, request, schedulesDict):
         this function returns the new schedule
         
     """
-    # If no trip has been assigned to this skipper yet, then the new trip will be at the same time as the LAST_RUN_DATE + 1 hour 
-    # so we give enough time for the skipper to get to the boat :)
-    dateTimeOfLastTrip = utils.addHoursToDateTime(globals.LAST_RUN_DATE+"|"+globals.LAST_RUN_TIME, 1)
+    # If no trip has been assigned to this skipper yet, then the new trip will be at the current run date and time
+    dateTimeOfLastTrip = globals.CURRENT_RUN_DATE+"|"+globals.CURRENT_RUN_TIME
     for key in schedulesDict.keys():
         if skippersRecord["name"] == key.split("-")[1]: 
             if utils.biggestDate(key.split("-")[0], dateTimeOfLastTrip) != dateTimeOfLastTrip:

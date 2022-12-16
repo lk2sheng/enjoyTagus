@@ -1,7 +1,9 @@
 import sys
 import os
 import constants as const
+import globals
 import dateTime as dt
+from datetime import datetime
 
 
 # Read command line arguments from sys.argv and validate file names and return List of file.
@@ -35,7 +37,22 @@ def readCommandLineArguments():
             sys.exit(-1)
     return (skypperfile, requestsfile, schedulefile)
 
+def init():
+    """
+    This function initialises the program global variables CURRENT_RUN_DATE, CURRENT_RUN_TIME
+    """
+    #print the current date and time in the format dd:mm:yyyy|hh:mm
+    globals.CURRENT_RUN_DATE = datetime.now().strftime("%d:%m:%Y")
+    globals.CURRENT_RUN_TIME = datetime.now().strftime("%H:%M")
+    
+    currentMinute = int(globals.CURRENT_RUN_TIME.split(":")[1])
+    currentHour = int(globals.CURRENT_RUN_TIME.split(":")[0])
+    if currentMinute > 30 and currentMinute < 60:
+        globals.CURRENT_RUN_TIME = dt.intToTime(currentHour+1, 0)
+    else:
+        globals.CURRENT_RUN_TIME = dt.intToTime(currentHour, 30)
 
+    
 def addHoursToDateTime(dateTime, hours):
     """
         Function adds a time to a datetime.It only adds hours not minutes

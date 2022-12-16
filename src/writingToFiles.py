@@ -6,25 +6,23 @@
 # 65015 Miquelina Josefa
 
 
+def createHeader(headerDate, headerTime, headerType = "Schedule"):
+    """Create a header for a file of type headerType which by default is Schedule, based on the filename and the header date and time 
 
-def writeScheduleFile(schedule, header, fileName):
     """
-    Writes a collection of scheduled cruises into a file.
+    header = "Company:\nTagus Sailing\nDay: \n"+headerDate+"\nTime: \n"+headerTime+"\n"+headerType+":\n"
+    return header
 
-    Requires:
-    schedule is a list with the structure as in the output of
-    scheduling.updateSchedule representing the cruises assigned;
-    header is a string with a header, as in the examples provided in 
-    the general specification (omitted here for the sake of readability);
-    fileName is a str with the name of a .txt file.
-    Ensures:
-    writing of file named fileName representing the cruises in schedule,
-    one per line, as organized in the examples provided
-    in the general specification (omitted here for the sake of readability); 
-    the lines in this file keeps the ordering top to bottom of 
-    the cruises as ordered head to tail in schedule.
-    """
+def writeScheduleFile(schedule, filename, headerTime, headerDate):
+    header = createHeader(headerDate, headerTime, "Schedule")
+    print(header)
+    file = open(filename, "w")
+    file.write(header)
+    for line in schedule:
+        file.write(line+"\n")
+    file.close()
 
 
 
 def writeSkippersFile(skippers, header, fileName):
+    return

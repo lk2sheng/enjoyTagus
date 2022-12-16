@@ -1,9 +1,11 @@
 import readingFromFiles
 import constants as const
-#import writingToFiles as writter
+import globals
+import dateTime
+import writingToFiles as writter
 import random
 import utils
-import sys
+import re
 import scheduling
 
 skippersDict = {}
@@ -92,6 +94,9 @@ utils.readCommandLineArguments()
 # Read command line arguments
 filesList = utils.readCommandLineArguments()
 
+# Initialize the global variables
+utils.init()
+print(globals.CURRENT_RUN_DATE, globals.CURRENT_RUN_TIME)
 
 (skippers, schedules) = assign(filesList[0], filesList[2], filesList[1])
 ## Test with hard codeed files
@@ -103,6 +108,22 @@ filesList = utils.readCommandLineArguments()
 print(skippers)
 print(schedules)
 
+
+# Compute the new files names. Replace the time in the file name with the time 30 minutes after the last run time
+newFilesHour = dateTime.hourToInt(globals.LAST_RUN_TIME)
+newFilesMinutes = 0
+headerDate = globals.LAST_RUN_DATE
+if( globals.LAST_RUN_TIME.split(":")[1] == "30"):
+    newFilesMinutes = 0
+    newFilesHour = dateTime.hourToInt(globals.LAST_RUN_TIME) + 1
+else:
+    newFilesMinutes = 30
+newFilesTime = dateTime.intToTime(newFilesHour , newFilesMinutes)
+
+newSkippersFileName = re.sub("skippers.*", "skippers"+str(newFilesTime).replace(":", "h")+".txt", filesList[0])
+newScheduleFileName = re.sub("schedule.*", "schedule"+str(newFilesTime).replace(":", "h")+".txt", filesList[2])
+
+print(newSkippersFileName, newScheduleFileName)
 # Save output files (new schedules, new skippers) 
-#writter.writeScheduleFile(newSchedule)
-#writter.writeSkippersFile(newSkippers)
+writter.writeScheduleFile(schedules,newScheduleFileName, newFilesTime, headerDate)
+#writter.writeSkippersFile(skippers, newSkippersFileName)
