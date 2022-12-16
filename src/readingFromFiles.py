@@ -1,5 +1,6 @@
 import constants as const
-
+import sys
+import globals
 #-*- coding: utf-8 -*-
 
 # 2022-2023 Programação 1 (LTI)
@@ -7,18 +8,52 @@ import constants as const
 # 65000 Óscar Adalberto 
 # 65015 Miquelina Josefa
 
-def teste():
-  
-    print(readSkippersFile("./data/testSet1/skippers17h00.txt"))
-
 
 
 def removeHeader (fileName):
     file = open(fileName, "r")
     filecontent = file.readlines()
+
+    # Validate header
+    nameOfFile = str(fileName).lower() # make sure is lower case so we can compare
+    
+    # File name must contain the type of file and the time of the file
+    typeOfFileInHeader = filecontent[const.NUM_HEADER_LINES-1].rstrip().lower().split(":")[0] # Remove the : and the \n from the file line. Make sure is lower case
+    
+    headerDate = filecontent[const.NUM_HEADER_LINES-4].rstrip().lower()
+    headerTime = filecontent[const.NUM_HEADER_LINES-2].rstrip().lower().replace(":", "h")
+    
+    # File name must contain the time of the header provided we replace the : with h to match time format
+    if( headerTime.replace(":", "h") not in nameOfFile ):
+        print ("Error: File " + fileName + " is not valid. The time of the file does not match the header.")
+        file.close()
+        sys.exit(-1)
+    
+    # File name must contain the type of file of the header
+    if typeOfFileInHeader not in nameOfFile:
+        print ("Error: File " + fileName + " is not valid. The name of the file does not match the header.")
+        file.close()
+        sys.exit(-1)
+    
+    # The header date must match the date of last RUN. 
+    # If last run is empty then safe to assume last run date is the same as the header date of this file
+    if( globals.LAST_RUN_DATE == "" ):
+        globals.LAST_RUN_DATE = headerDate
+        globals.LAST_RUN_TIME = headerTime.replace("h", ":") # Convert back to the time standard format
+    else:
+        if( headerDate != globals.LAST_RUN_DATE or headerTime != globals.LAST_RUN_TIME.replace(":", "h")):
+            print ("Error: File " + fileName + " is not valid. The date of the file does not match the last run date " + 
+                   globals.LAST_RUN_DATE + ", " + globals.LAST_RUN_TIME + ".")
+            file.close()
+            sys.exit(-1)
+    
+    # Header validated we can now remove the header    
     for x in range(const.NUM_HEADER_LINES):
         del filecontent[0]
+
     file.close()
+    
+    
     return filecontent
 
 
