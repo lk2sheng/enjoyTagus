@@ -57,11 +57,8 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
     """
 
     # Read all the files
-    # skippersDict = readingFromFiles.readSkippersFile("./data/testSet1/skippers17h00.txt")
     skippersDict = readingFromFiles.readSkippersFile(skippersFileName)
-    # schedules = readingFromFiles.readSchedulesFile("./data/testSet1/schedule17h00.txt")
     schedulesDict = readingFromFiles.readSchedulesFile(scheduleFileName)
-    # requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
     requestsList = readingFromFiles.readRequestsFile(requestsFileName)
 
     notAssignedList = [] # List of the requests that could not be matched to available skippers
@@ -91,10 +88,10 @@ MAIN PROGRAM
 """
 
 # Read command line arguments
-#(skippersFile, requestsFile, scheduleFile) = utils.readCommandLineArguments()
-(skippersFile, requestsFile, scheduleFile) = ("./data/testSet1/skippers17h00.txt", 
-                                    "./data/testSet1/requests17h00.txt",
-                                    "./data/testSet1/schedule17h00.txt")
+(skippersFile, requestsFile, scheduleFile) = utils.readCommandLineArguments()
+#(skippersFile, requestsFile, scheduleFile) = ("./data/testSet1/skippers17h00.txt", 
+#                                    "./data/testSet1/requests17h00.txt",
+#                                    "./data/testSet1/schedule17h00.txt")
 
 
 # Assign skippers to requests
