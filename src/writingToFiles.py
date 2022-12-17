@@ -58,11 +58,22 @@ def writeScheduleFile(schedule, notAssignedList, filename, headerTime, headerDat
         
     sortedSchedule = getSortableSchedule(schedule)
     for key in sorted(sortedSchedule.keys()):
-        print(sortedSchedule[key])
         file.write("\n"+sortedSchedule[key])
     file.close()
 
 
 
-def writeSkippersFile(skippers, header, fileName):
-    return
+def writeSkippersFile(skippers, fileName, headerDate, headerTime):
+    """ Save all skipper information in a file """
+    
+    header = createHeader(headerDate, headerTime, "Skippers")
+    file = open(fileName, "w")
+    file.write(header)
+    for key in skippers:
+        skipperDataString = skippers[key]["name"]+", "+skippers[key]["languages"]+", "+ \
+                            skippers[key]["licenceType"]+", "+str(int(skippers[key]["tariff"]))+", "+ \
+                            skippers[key]["speciality"]+", "+str(int(skippers[key]["timeMax"]))+ ", "+ \
+                            str(int(skippers[key]["accumulatedTime"]))+", "+ \
+                            "("+skippers[key]["dateLastCruise"]+", "+skippers[key]["timeLastCruise"]+")"
+        file.write("\n"+skipperDataString)
+    file.close()

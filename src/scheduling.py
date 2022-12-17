@@ -13,7 +13,8 @@ def updateSkipper(skipperRecord, schedule):
    # Add accumulated time to the skipper record
    skipperRecord["accumulatedTime"] += float(schedule[const.SCHEDULE_DURATION])
    # Add last trip from schedule to the skipper record
-   skipperRecord["lastTrip"] = schedule[const.SCHEDULE_DATE] + "|" + schedule[const.SCHEDULE_TIME]
+   skipperRecord["dateLastCruise"] = schedule[const.SCHEDULE_DATE]
+   skipperRecord["timeLastCruise"] = schedule[const.SCHEDULE_TIME]
 
 
 

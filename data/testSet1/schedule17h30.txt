@@ -1,0 +1,11 @@
+Company:
+Tagus Sailing
+Day: 
+17:30
+Time: 
+07:11:2022
+Schedule:
+07:11:2022, not-assigned, John Rosner
+07:11:2022, 17:30, 1, Carlos Santos, 100, Ramiro Ramirez
+08:11:2022, 08:30, 4, Ana Amaral, 160, Kadri Vider
+08:11:2022, 12:30, 2, Ana Amaral, 40, François Macron

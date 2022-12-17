@@ -92,7 +92,9 @@ def readSkippersFile(fileName):
             # Adicionar o skipper ao dicionario
             skippersDict[skipper[const.SKIPPER_NAME_IDX]]= {"name": skipper[const.SKIPPER_NAME_IDX], "licenceType": skipper[const.SKIPPER_LICENCE_TYPE], "languages": skipper[const.SKIPPER_LANGUAGES],
                                    "tariff": float(skipper[const.SKIPPER_TARIFF]), "speciality": skipper[const.SKIPPER_SPECIALITY], 
-                                   "timeMax": float(skipper[const.SKIPPER_TIME_MAX]), "accumulatedTime": float(skipper[const.SKIPPER_ACCUMULATED_TIME])}
+                                   "timeMax": float(skipper[const.SKIPPER_TIME_MAX]), "accumulatedTime": float(skipper[const.SKIPPER_ACCUMULATED_TIME]),
+                                   "dateLastCruise": skipper[const.SKIPPER_DATE_LAST_CRUISE].replace("(", ""),
+                                   "timeLastCruise": skipper[const.SKIPPER_TIME_LAST_CRUISE].replace(")", "")}
     return skippersDict
 
 

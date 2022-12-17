@@ -109,4 +109,4 @@ MAIN PROGRAM
 # Save output files (new schedules, new skippers) 
 # Save all schedules sorted by date provided that the not assigned List comes first in the file
 writter.writeScheduleFile(newSchedules, notAssignedList, newScheduleFileName, headerDate, headerTime)
-#writter.writeSkippersFile(newSkippers, newSkippersFileName, headerDate, headerTime)
+writter.writeSkippersFile(newSkippers, newSkippersFileName, headerDate, headerTime)

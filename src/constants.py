@@ -36,6 +36,8 @@ SKIPPER_TARIFF = 3
 SKIPPER_SPECIALITY = 4
 SKIPPER_TIME_MAX = 5
 SKIPPER_ACCUMULATED_TIME = 6
+SKIPPER_DATE_LAST_CRUISE = 7
+SKIPPER_TIME_LAST_CRUISE = 8
 
 # In a cruise's list:
 # Index of the element with the client's name
