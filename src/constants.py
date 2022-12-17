@@ -17,6 +17,9 @@
 # Value for skipper's name in a task not assigned in the output schedule
 NOT_ASSIGNED = "not-assigned"
 
+#HOURS References
+END_OF_DAY_INT_HOUR = 20
+START_OF_DAY_STRING_TIME = "08:00"
 
 
 # In a file:

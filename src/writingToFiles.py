@@ -4,22 +4,62 @@
 # Grupo 546
 # 65000 Óscar Adalberto 
 # 65015 Miquelina Josefa
+import constants as const
+import globals
+import dateTime as dt
+from operator import itemgetter
 
+def getSortableSchedule (schedulesDict):
+    """Gets a schedule that can be sorted by the key. Key is an integer representing the datetime in int format.
+       Schedules older than the last run date and time are removed from the schedule"""
+       
+    sortedScheduleDict = {}
+    for scheduleKey in schedulesDict:
+        scheduleDateInt = dt.dateToInt(schedulesDict[scheduleKey][const.SCHEDULE_DATE])
+        lastRunDateInt  = dt.dateToInt(globals.LAST_RUN_DATE)
+        scheduleTimeInt = dt.hourToInt(schedulesDict[scheduleKey][const.SCHEDULE_TIME]) + dt.minutesToInt(schedulesDict[scheduleKey][const.SCHEDULE_TIME])
+        lastRunTimeInt  = dt.hourToInt(globals.CURRENT_RUN_TIME) + dt.minutesToInt(globals.CURRENT_RUN_TIME)
+       
+        # If schedule is before last run date then we can remove from schedule, do nothing and continue to the next key
+        if scheduleDateInt < lastRunDateInt:
+            continue
+        elif scheduleDateInt == lastRunDateInt and scheduleTimeInt < lastRunTimeInt:
+            continue
 
+        # Schedule is in the future (i.e bigger than the last rundatetime), we can proceed to sort it
+        scheduleString = schedulesDict[scheduleKey][const.SCHEDULE_DATE] + ", " +\
+                        schedulesDict[scheduleKey][const.SCHEDULE_TIME]+ ", " + \
+                        str(int(schedulesDict[scheduleKey][const.SCHEDULE_DURATION]))+ ", " + \
+                        schedulesDict[scheduleKey][const.SCHEDULE_SKIPPER_NAME]+ ", " + \
+                        str(int(schedulesDict[scheduleKey][const.SCHEDULE_PRICE]))+ ", " + \
+                        schedulesDict[scheduleKey][const.SCHEDULE_CLIENT_NAME]
+        
+        # In order to sort by date and time we need to create a key that is the sum of the date and time                
+        key = dt.dateToInt(schedulesDict[scheduleKey][const.SCHEDULE_DATE]) + dt.hourToInt(schedulesDict[scheduleKey][const.SCHEDULE_TIME])
+        sortedScheduleDict[key] = scheduleString
+        
+    
+    return sortedScheduleDict
+    
 def createHeader(headerDate, headerTime, headerType = "Schedule"):
     """Create a header for a file of type headerType which by default is Schedule, based on the filename and the header date and time 
 
     """
-    header = "Company:\nTagus Sailing\nDay: \n"+headerDate+"\nTime: \n"+headerTime+"\n"+headerType+":\n"
+    header = "Company:\nTagus Sailing\nDay: \n"+headerDate+"\nTime: \n"+headerTime+"\n"+headerType+":"
     return header
 
-def writeScheduleFile(schedule, filename, headerTime, headerDate):
+def writeScheduleFile(schedule, notAssignedList, filename, headerTime, headerDate):
+    """ Save all schedules sorted by date provided that the not assigned List comes first in the file """
     header = createHeader(headerDate, headerTime, "Schedule")
-    print(header)
     file = open(filename, "w")
     file.write(header)
-    for line in schedule:
-        file.write(line+"\n")
+    for notAssignedLine in notAssignedList:
+        file.write("\n"+notAssignedLine)
+        
+    sortedSchedule = getSortableSchedule(schedule)
+    for key in sorted(sortedSchedule.keys()):
+        print(sortedSchedule[key])
+        file.write("\n"+sortedSchedule[key])
     file.close()
 
 

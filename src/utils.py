@@ -2,8 +2,11 @@ import sys
 import os
 import constants as const
 import globals
-import dateTime as dt
 from datetime import datetime
+from datetime import timedelta
+import re
+import globals
+import dateTime as dt
 
 
 # Read command line arguments from sys.argv and validate file names and return List of file.
@@ -26,83 +29,63 @@ def readCommandLineArguments():
     skypperfile = sys.argv[1]
     requestsfile = sys.argv[2]
     schedulefile = sys.argv[3]
-    print (sys.argv)
     
     for fileArgIndex in range(1, 4):    
         # Check whether a path pointing to a file
         file = sys.argv[fileArgIndex]
-        print(file)
         if os.path.isfile(file) != True:
             print("Error: File " + file + " does not exist.")
             sys.exit(-1)
     return (skypperfile, requestsfile, schedulefile)
 
-def init():
+# Initialization is done once only, so this as no effect if global variables are already set
+def init(date, time):
     """
-    This function initialises the program global variables CURRENT_RUN_DATE, CURRENT_RUN_TIME
+    This function initialises the program global variables CURRENT_RUN_DATETIME, LAST_RUN_DATETIME used throughout the program
     """
-    #print the current date and time in the format dd:mm:yyyy|hh:mm
-    globals.CURRENT_RUN_DATE = datetime.now().strftime("%d:%m:%Y")
-    globals.CURRENT_RUN_TIME = datetime.now().strftime("%H:%M")
+    # If globals are not set lets set them according to dates and times given as parameters
+    if globals.CURRENT_RUN_DATE != "" or globals.LAST_RUN_DATE != "":
+        # dates already set, we should keep them
+        return 
     
-    currentMinute = int(globals.CURRENT_RUN_TIME.split(":")[1])
-    currentHour = int(globals.CURRENT_RUN_TIME.split(":")[0])
-    if currentMinute > 30 and currentMinute < 60:
-        globals.CURRENT_RUN_TIME = dt.intToTime(currentHour+1, 0)
+    # Last run date and time are given as parameters
+    globals.LAST_RUN_DATE = date
+    globals.LAST_RUN_TIME = time
+    
+    # Compute current run date and time (which is 30 minutes after last run date unless it's a new day)
+    if( dt.hourToInt(time) >= const.END_OF_DAY_INT_HOUR ):
+        # This day is over we should start a new day based on todays date
+        newTime = datetime.strptime(date, '%d:%m:%Y') + timedelta(days=1)
+        globals.CURRENT_RUN_DATE = newTime.strftime("%d:%m:%Y")
+        globals.CURRENT_RUN_TIME = const.START_OF_DAY_STRING_TIME
     else:
-        globals.CURRENT_RUN_TIME = dt.intToTime(currentHour, 30)
-
-    
-def addHoursToDateTime(dateTime, hours):
-    """
-        Function adds a time to a datetime.It only adds hours not minutes
-        Requires: DateTime in the format "dd:mm:yyyy|hh:mm" and hour is the integer representing the number of hours to add. 
-                  Unfortunately no validation is done on the dateTime format after adding the hours as it can be bigger than 24.
-                  In that case the date will be wrong
-        
-    """
-    date1 = (dateTime.split("|")[0], dateTime.split("|")[1])
-    time1 = (date1[1].split(":")[0], date1[1].split(":")[1])
-    
-    newHour = dt.hourToInt(time1[0]) + hours
-    newHourString = dt.intToTime(newHour, int(time1[1]))
-    return date1[0] + "|" + newHourString 
-
-
-
-def biggestDate(dateTime1, dateTime2):
-    """
-    This function takes two dates and times and returns the biggest one.
-    Requires: The dates and times to be in the format: dd:mm:yyyy|hh:mm
-    
-    
-    Ensures: When the dates are the same, the function returns one of them
-    
-    """
-    date1 = dateTime1.split("|")[0]
-    date2 = dateTime2.split("|")[0]
-    day1 = date1.split(":")[0]
-    month1 = date1.split(":")[1]
-    year1 = date1.split(":")[2]
-    day2 = date2.split(":")[0]
-    month2 = date2.split(":")[1]
-    year2 = date2.split(":")[2]
-    time1 = dateTime1.split("|")[1]
-    time2 = dateTime2.split("|")[1]
-    hour1 = time1.split(":")[0]
-    min1 = time1.split(":")[1]
-    hour2 = time2.split(":")[0]
-    min2 = time2.split(":")[1]
-
-    if date1 == date2 :
-        if int ( hour1 + min1 )  >  int( hour2 + min2 ):
-            return dateTime1
+        currentMinute = int(globals.LAST_RUN_TIME.split(":")[1])
+        currentHour = int(globals.LAST_RUN_TIME.split(":")[0])
+        if currentMinute >= 30 and currentMinute < 60:
+            globals.CURRENT_RUN_TIME = dt.intToTime(currentHour+1, 0)
         else:
-            return dateTime2
-        
+            globals.CURRENT_RUN_TIME = dt.intToTime(currentHour, 30)
+        # Since we are not in a new day, current run date is the same as last run date
+        globals.CURRENT_RUN_DATE = date
+
+
+# Compute the next file names complete path according to requrements of file naming convention. 
+# Next file names should be in the same directory structure and with the same name as redecessors as long as the time is increased by 30 minutes
+# Returns the new computed file names and the dates that should go to the header of each file
+def getNextFileNames(skippersFile, scheduleFile):
+    newFilesHour = dt.hourToInt(globals.LAST_RUN_TIME)
+    newFilesMinutes = 0
+    headerDate = globals.LAST_RUN_DATE
+    if( globals.LAST_RUN_TIME.split(":")[1] == "30"):
+        newFilesMinutes = 0
+        newFilesHour = dt.hourToInt(globals.LAST_RUN_TIME) + 1
     else:
-        if int(year1+month1+day1) > int(""+year2+month2+day2):
-            return dateTime1
-        else:
-            return dateTime2
-            
+        newFilesMinutes = 30
+    
+    newFilesTime = headerTime = dt.intToTime(newFilesHour , newFilesMinutes)
+
+    newSkippersFileName = re.sub("skippers.*", "skippers"+str(newFilesTime).replace(":", "h")+".txt", skippersFile)
+    newScheduleFileName = re.sub("schedule.*", "schedule"+str(newFilesTime).replace(":", "h")+".txt", scheduleFile)
+    return (newSkippersFileName, newScheduleFileName, headerDate, headerTime)   
+
+           

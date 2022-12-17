@@ -1,11 +1,10 @@
 import readingFromFiles
 import constants as const
-import globals
-import dateTime
 import writingToFiles as writter
 import random
+import globals
 import utils
-import re
+
 import scheduling
 
 skippersDict = {}
@@ -65,7 +64,7 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
     # requests = readingFromFiles.readRequestsFile("./data/testSet1/requests17h00.txt")
     requestsList = readingFromFiles.readRequestsFile(requestsFileName)
 
-
+    notAssignedList = [] # List of the requests that could not be matched to available skippers
     # For each request
     for request in requestsList:
         # Compute the matching skipper for the request criteria
@@ -74,6 +73,7 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
                                                             request[const.REQUEST_SPECIALITY_TYPE], 
                                                             float(request[const.REQUEST_CRUISE_TIME]))
         if matchedSkipper == []:
+            notAssignedList.append(globals.CURRENT_RUN_DATE + ", "+const.NOT_ASSIGNED+", " + request[const.REQUEST_CLIENT_NAME_IDX])
             continue
 
         # Update the schedule. Give the matched skipper details, the request he was just assigned to and the existing schedules
@@ -84,46 +84,29 @@ def assign(skippersFileName, scheduleFileName, requestsFileName):
         # Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
         scheduling.updateSkipper(skippersDict[matchedSkipper], newSchedule)
 
-    return (skippersDict, schedulesDict)
+    return (skippersDict, schedulesDict, notAssignedList)
 
 """"
 MAIN PROGRAM
 """
 
-utils.readCommandLineArguments()
 # Read command line arguments
-filesList = utils.readCommandLineArguments()
-
-# Initialize the global variables
-utils.init()
-print(globals.CURRENT_RUN_DATE, globals.CURRENT_RUN_TIME)
-
-(skippers, schedules) = assign(filesList[0], filesList[2], filesList[1])
-## Test with hard codeed files
-"""
-(skippers, schedules) = assign("./data/testSet1/skippers17h00.txt", 
-                                    "./data/testSet1/schedule17h00.txt",
-                                    "./data/testSet1/requests17h00.txt")
-"""
-print(skippers)
-print(schedules)
+#(skippersFile, requestsFile, scheduleFile) = utils.readCommandLineArguments()
+(skippersFile, requestsFile, scheduleFile) = ("./data/testSet1/skippers17h00.txt", 
+                                    "./data/testSet1/requests17h00.txt",
+                                    "./data/testSet1/schedule17h00.txt")
 
 
+# Assign skippers to requests
+(newSkippers, newSchedules, notAssignedList) = assign(skippersFile, scheduleFile, requestsFile)
+
+# Compute the next file names complete path according to requrements of file naming convention. 
+# Next file names should be in the same directory structure and with the same name as redecessors as long as the time is increased by 30 minutes
+(newSkippersFileName, newScheduleFileName, headerDate, headerTime) = utils.getNextFileNames(skippersFile, scheduleFile)
 # Compute the new files names. Replace the time in the file name with the time 30 minutes after the last run time
-newFilesHour = dateTime.hourToInt(globals.LAST_RUN_TIME)
-newFilesMinutes = 0
-headerDate = globals.LAST_RUN_DATE
-if( globals.LAST_RUN_TIME.split(":")[1] == "30"):
-    newFilesMinutes = 0
-    newFilesHour = dateTime.hourToInt(globals.LAST_RUN_TIME) + 1
-else:
-    newFilesMinutes = 30
-newFilesTime = dateTime.intToTime(newFilesHour , newFilesMinutes)
 
-newSkippersFileName = re.sub("skippers.*", "skippers"+str(newFilesTime).replace(":", "h")+".txt", filesList[0])
-newScheduleFileName = re.sub("schedule.*", "schedule"+str(newFilesTime).replace(":", "h")+".txt", filesList[2])
 
-print(newSkippersFileName, newScheduleFileName)
 # Save output files (new schedules, new skippers) 
-writter.writeScheduleFile(schedules,newScheduleFileName, newFilesTime, headerDate)
-#writter.writeSkippersFile(skippers, newSkippersFileName)
+# Save all schedules sorted by date provided that the not assigned List comes first in the file
+writter.writeScheduleFile(newSchedules, notAssignedList, newScheduleFileName, headerDate, headerTime)
+#writter.writeSkippersFile(newSkippers, newSkippersFileName, headerDate, headerTime)

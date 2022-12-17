@@ -1,6 +1,7 @@
 import constants as const
 import sys
 import globals
+import utils
 #-*- coding: utf-8 -*-
 
 # 2022-2023 Programação 1 (LTI)
@@ -35,13 +36,15 @@ def removeHeader (fileName):
         file.close()
         sys.exit(-1)
     
+    # Now that we know which files we are reading we can compute the global auxiliary variables LASTRUN and CURRENTRUN datetimes
+    # Initialization is done once only, so this as no effect if global variables are already set
+    utils.init(headerDate, headerTime.replace("h", ":"))
+    
     # The header date must match the date of last RUN. 
     # If last run is empty then safe to assume last run date is the same as the header date of this file
     if( globals.LAST_RUN_DATE == "" ):
         globals.LAST_RUN_DATE = headerDate
         globals.LAST_RUN_TIME = headerTime.replace("h", ":") # Convert back to the time standard format
-        globals.CURRENT_RUN_DATE = headerDate
-        globals.CURRENT_RUN_TIME = headerTime.replace("h", ":") 
     else:
         if( headerDate != globals.LAST_RUN_DATE or headerTime != globals.LAST_RUN_TIME.replace(":", "h")):
             print ("Error: File " + fileName + " is not valid. The date of the file does not match the last run date " + 

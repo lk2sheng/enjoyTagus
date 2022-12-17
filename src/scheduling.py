@@ -5,7 +5,7 @@
 # 65000 Óscar Adalberto 
 # 65015 Miquelina Josefa
 import constants as const
-import utils
+import dateTime as dt
 import globals
 
 # Update the skipper. Given the macthed skypper details return a new updated skipper record based on the travel request
@@ -29,16 +29,16 @@ def getNewSchedule(skippersRecord, request, schedulesDict):
     dateTimeOfLastTrip = globals.CURRENT_RUN_DATE+"|"+globals.CURRENT_RUN_TIME
     for key in schedulesDict.keys():
         if skippersRecord["name"] == key.split("-")[1]: 
-            if utils.biggestDate(key.split("-")[0], dateTimeOfLastTrip) != dateTimeOfLastTrip:
+            if dt.biggestDate(key.split("-")[0], dateTimeOfLastTrip) != dateTimeOfLastTrip:
                 dateTimeOfLastTrip = key.split("-")[0]
-    if( dateTimeOfLastTrip == utils.addHoursToDateTime(globals.LAST_RUN_DATE+"|"+globals.LAST_RUN_TIME, 1)):
+    if( dateTimeOfLastTrip == globals.CURRENT_RUN_DATE+"|"+globals.CURRENT_RUN_TIME):
         # No trip has been assigned to this skipper yet, create the trip in the schedule assigning it a key
         schedulesDict[dateTimeOfLastTrip+"-"+skippersRecord["name"]] = []
         newTripDateTime = dateTimeOfLastTrip
     else:
         # A trip has been assigned to this skipper, get the last trip and add the cruise duration to it
         lastSchedule = schedulesDict[dateTimeOfLastTrip+"-"+skippersRecord["name"]]
-        newTripDateTime = utils.addHoursToDateTime(dateTimeOfLastTrip, int(lastSchedule[2]))
+        newTripDateTime = dt.addHoursToDateTime(dateTimeOfLastTrip, int(lastSchedule[2]))
         
     # Now compute the new schedule attributes
     newSchedule = ["","","","","",""]
