@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 
 # 2022-2023 Programação 1 (LTI)
-# Grupo 546
-# 65000 Óscar Adalberto 
-# 65015 Miquelina Josefa
+# Grupo 221
+# 60253 Hugo Silva 
+# 60284 Kaisheng Li
 import constants as const
 import globals
 import dateTime as dt
